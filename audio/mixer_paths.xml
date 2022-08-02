@@ -1,0 +1,39 @@
+<mixer>
+  <!-- These are the initial mixer settings -->
+  <ctl name="Left SPK Mixer Left DAC1 Switch" val="0"/>
+  <ctl name="Left SPK Mixer Right DAC1 Switch" val="0"/>
+  <ctl name="Int Spk Switch" val="0"/>
+  <ctl name="Left HP Mixer Left DAC1 Switch" val="0"/>
+  <ctl name="Right HP Mixer Right DAC1 Switch" val="0"/>
+  <ctl name="Headphone Jack Switch" val="0"/>
+  <ctl name="Left ADC Mixer MIC1 Switch" val="0"/>
+  <ctl name="Right ADC Mixer MIC1 Switch" val="0"/>
+  <ctl name="Int Mic Switch" val="0"/>
+  <ctl name="Left ADC Mixer INA1 Switch" val="0"/>
+  <ctl name="Right ADC Mixer INA1 Switch" val="0"/>
+  <ctl name="Mic Jack Switch" val="0"/>
+
+  <path name="speaker">
+    <ctl name="Left SPK Mixer Left DAC1 Switch" val="1"/>
+    <ctl name="Left SPK Mixer Right DAC1 Switch" val="1"/>
+    <ctl name="Int Spk Switch" val="1"/>
+  </path>
+
+  <path name="headphone">
+    <ctl name="Left HP Mixer Left DAC1 Switch" val="1"/>
+    <ctl name="Right HP Mixer Right DAC1 Switch" val="1"/>
+    <ctl name="Headphone Jack Switch" val="1"/>
+  </path>
+
+  <path name="int-mic">
+    <ctl name="Left ADC Mixer MIC1 Switch" val="1"/>
+    <ctl name="Right ADC Mixer MIC1 Switch" val="1"/>
+    <ctl name="Int Mic Switch" val="1"/>
+  </path>
+
+  <path name="headset-mic">
+    <ctl name="Left ADC Mixer INA1 Switch" val="1"/>
+    <ctl name="Right ADC Mixer INA1 Switch" val="1"/>
+    <ctl name="Mic Jack Switch" val="1"/>
+  </path>
+</mixer>
