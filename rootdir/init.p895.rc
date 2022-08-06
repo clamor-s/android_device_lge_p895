@@ -1,0 +1,158 @@
+import init.tegra3.rc
+
+import init.p895.usb.rc
+
+on early-init
+    mount debugfs debugfs /sys/kernel/debug
+
+    write /sys/block/mmcblk0/bdi/read_ahead_kb 512
+    write /sys/block/mmcblk0/queue/scheduler noop
+
+on init
+    symlink /sdcard /storage/sdcard0
+
+    write /sys/kernel/mm/ksm/deferred_timer 1
+    write /sys/kernel/mm/ksm/pages_to_scan 100
+    write /sys/kernel/mm/ksm/sleep_millisecs 500
+    write /sys/kernel/mm/ksm/run 1
+
+on early-boot
+    setprop ro.audio.flinger_standbytime_ms 15000
+
+on fs
+    mount_all /fstab.p895
+
+on post-fs-data
+    # Set indication (checked by vold) that we have finished this action
+    setprop vold.post_fs_data_done 1
+
+on boot
+    # Bluetooth UART device
+    chmod 0660 /dev/ttyHS2
+    chown bluetooth net_bt_stack /dev/ttyHS2
+
+    # Bluetooth power up/down interface
+    chmod 0660 /sys/class/rfkill/rfkill0/state
+    chmod 0660 /sys/class/rfkill/rfkill0/type
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/state
+    chown bluetooth net_bt_stack /sys/class/rfkill/rfkill0/type
+
+    # Bluetooth MAC address programming
+    chown bluetooth net_bt_stack ro.bt.bdaddr_path
+    chown bluetooth net_bt_stack /system/etc/bluetooth
+    chown bluetooth net_bt_stack /data/misc/bluetooth
+    setprop ro.bt.bdaddr_path "/data/misc/bluetooth/bdaddr"
+
+    # Bluetooth LPM
+    chmod 0220 /proc/bluetooth/sleep/lpm
+    chmod 0220 /proc/bluetooth/sleep/btwrite
+    chown bluetooth net_bt_stack /proc/bluetooth/sleep/lpm
+    chown bluetooth net_bt_stack /proc/bluetooth/sleep/btwrite
+
+    # GPS UART device
+    write /sys/class/gpio/export 61
+    write /sys/class/gpio/gpio61/value 0
+    write /sys/class/gpio/gpio61/direction out
+    chown gps system /sys/class/gpio/gpio61/value
+    chmod 0664 /sys/class/gpio/gpio61/value
+    chown system system /sys/devices/platform/gps_gpio/poweron
+    chown system system /sys/devices/platform/gps_gpio/reset
+    chown system system /sys/devices/platform/gps_gpio/eclk
+    chown system system /dev/pts17
+    mkdir /data/gps
+    chmod 770 /data/gps
+    chown gps system /data/gps
+    chmod 770 /system/etc/cert/lge.cer
+    chown system system /system/etc/cert/lge.cer
+    chmod 770 /system/etc/hmconfig.txt
+    chown system system /system/etc/hmconfig.txt
+    chown gps system /dev/ttyHS1
+    chmod 0660 /dev/ttyHS1
+    chown audio audio /dev/pts29
+
+    # NFC
+    chmod 0660 /dev/pn544
+    chown nfc nfc /dev/pn544
+
+    # Backlight
+    chown system system /sys/class/leds/lcd-backlight/brightness
+    chown system system /sys/class/leds/button-backlight/brightness
+    chown system system /sys/class/leds/button-backlight/br_maintain_on
+
+    # Fuelgauge
+    chown system system /sys/class/power_supply/fuelgauge/device/state
+    chown system system /sys/class/power_supply/charger/device/chgcc_ta
+
+    # DIDIM
+    chown system system /sys/class/graphics/fb0/device/smartdimmer/enable
+    chown system system /sys/class/graphics/fb0/device/smartdimmer/aggressiveness
+    chown system system /sys/class/graphics/fb0/device/smartdimmer/phase_in_adjustments
+
+    # PROXIMITY SENSOR
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/enable_ps_sensor
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/enable_ps_sensor
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/enable_als_sensor
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/enable_als_sensor
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/proxidata
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/proxidata
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/luxdata
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/luxdata
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/ps_hysteresis
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/ps_hysteresis
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/ps_threshold
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/ps_threshold
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/run_calibration
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/run_calibration
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/ppcount
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/ppcount
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/default_calibration
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/default_calibration
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/ps_data
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/ps_data
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/is_white
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/is_white
+    chown system system /sys/bus/i2c/drivers/apds990x/0-0039/ps_cal_result
+    chmod 0660 /sys/bus/i2c/drivers/apds990x/0-0039/ps_cal_result
+
+on property:sys.boot_completed=1
+    # IO - default mmc queue settings
+    write /sys/block/mmcblk0/queue/scheduler bfq
+    write /sys/block/mmcblk0/bdi/read_ahead_kb 256
+    write /sys/block/mmcblk0/queue/iosched/slice_idle 0
+    # Forces the completion to run on the requesting cpu
+    write /sys/block/mmcblk0/queue/rq_affinity 2
+    # Disable entropy
+    write /sys/block/mmcblk0/queue/add_random 0
+
+service wpa_supplicant /system/bin/wpa_supplicant \
+    -iwlan0 -Dnl80211 -c/data/misc/wifi/wpa_supplicant.conf \
+    -I/system/etc/wifi/wpa_supplicant_overlay.conf \
+    -e/data/misc/wifi/entropy.bin -g@android:wpa_wlan0
+    #   we will start as root and wpa_supplicant will switch to user wifi
+    #   after setting up the capabilities required for WEXT
+    #   user wifi
+    #   group wifi inet keystore
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+service p2p_supplicant /system/bin/wpa_supplicant \
+    -iwlan0 -Dnl80211 -iwlan0 -c/data/misc/wifi/wpa_supplicant.conf \
+    -I/system/etc/wifi/wpa_supplicant_overlay.conf -N \
+    -ip2p0 -Dnl80211 -c /data/misc/wifi/p2p_supplicant.conf \
+    -I/system/etc/wifi/p2p_supplicant_overlay.conf \
+    -puse_p2p_group_interface=1 -e/data/misc/wifi/entropy.bin \
+    -g@android:wpa_wlan0
+#   we will start as root and wpa_supplicant will switch to user wifi
+#   after setting up the capabilities required for WEXT
+#   user wifi
+#   group wifi inet keystore
+    class main
+    socket wpa_wlan0 dgram 660 wifi wifi
+    disabled
+    oneshot
+
+on property:sys.shutdown.requested=1recovery
+    start recoveryd
+
