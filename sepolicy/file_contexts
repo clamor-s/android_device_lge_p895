@@ -1,0 +1,4 @@
+# Devices
+/dev/ttyHS1                       u:object_r:gps_device:s0
+/dev/ttyHS2                       u:object_r:hci_attach_dev:s0
+
