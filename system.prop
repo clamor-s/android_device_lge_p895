@@ -1,0 +1,13 @@
+# Set default LCD density to TVDPI
+ro.sf.lcd_density=213
+
+# Disable LTE
+telephony.lteOnGsmDevice=0
+ro.telephony.default_network=3
+
+persist.sys.usb.config=mtp,adb
+
+# Wi-Fi
+wifi.interface=wlan0
+
+ro.bt.bdaddr_path=/sys/devices/platform/bd_address/bdaddr_if
